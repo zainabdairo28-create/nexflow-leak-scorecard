@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#FAF6F0">
+<title>The Sales Leak Scorecard — Nexflow</title>
+<meta name="description" content="12 questions. 2 minutes. Find the one place your sales are leaking.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0A1F44;
+    --gold:#C9A84C;
+    --gold-deep:#8A6A1F;
+    --cream:#FAF6F0;
+    --black:#1A1A1A;
+    --navy-70:rgba(10,31,68,.70);
+    --navy-50:rgba(10,31,68,.50);
+    --navy-12:rgba(10,31,68,.12);
+    --error:#9B2C2C;
+  }
+
+  *,*::before,*::after{box-sizing:border-box}
+
+  html{
+    -webkit-text-size-adjust:100%;
+  }
+
+  body{
+    margin:0;
+    background:var(--cream);
+    color:var(--black);
+    font-family:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+    font-size:16px;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+
+  .app{
+    max-width:560px;
+    margin:0 auto;
+    min-height:100vh;
+    min-height:100dvh;
+    display:flex;
+    flex-direction:column;
+    padding:22px 20px calc(26px + env(safe-area-inset-bottom));
+  }
+
+  .screen{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+  }
+
+  /* ---------- top bar ---------- */
+  .topbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+  }
+  .wordmark{
+    font-family:'Playfair Display',Georgia,serif;
+    font-size:15px;
+    font-weight:700;
+    letter-spacing:.01em;
+    color:var(--navy);
+  }
+  .counter{
+    font-size:11px;
+    font-weight:600;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--navy-50);
+  }
+
+  /* ---------- progress ---------- */
+  .progress{
+    height:3px;
+    margin-top:14px;
+    background:var(--navy-12);
+    border-radius:2px;
+    overflow:hidden;
+  }
+  .progress__fill{
+    height:100%;
+    width:0;
+    background:var(--gold);
+    border-radius:2px;
+    transition:width .35s cubic-bezier(.4,0,.2,1);
+  }
+
+  /* ---------- type ---------- */
+  .display{
+    font-family:'Playfair Display',Georgia,serif;
+    font-weight:700;
+    font-size:clamp(2.05rem,8.8vw,2.85rem);
+    line-height:1.1;
+    letter-spacing:-.02em;
+    color:var(--navy);
+    margin:0 0 16px;
+  }
+  .display--sm{
+    font-size:clamp(1.6rem,6.6vw,1.95rem);
+    line-height:1.2;
+  }
+  .eyebrow{
+    margin:0 0 18px;
+    font-size:11px;
+    font-weight:600;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color:var(--gold-deep);
+  }
+  .sub{
+    margin:0;
+    font-size:16.5px;
+    line-height:1.6;
+    color:var(--navy-70);
+  }
+  .micro{
+    margin:12px 0 0;
+    font-size:12.5px;
+    line-height:1.5;
+    color:var(--navy-50);
+    text-align:center;
+  }
+  .label{
+    margin:0 0 8px;
+    font-size:11px;
+    font-weight:600;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:var(--gold-deep);
+  }
+  .rule{
+    height:1px;
+    background:var(--navy-12);
+    border:0;
+    margin:24px 0;
+  }
+
+  /* ---------- buttons ---------- */
+  .btn{
+    display:block;
+    width:100%;
+    font-family:inherit;
+    font-size:16px;
+    font-weight:600;
+    line-height:1.35;
+    padding:16px 20px;
+    border-radius:6px;
+    border:1px solid transparent;
+    text-align:center;
+    text-decoration:none;
+    cursor:pointer;
+    touch-action:manipulation;
+    -webkit-tap-highlight-color:transparent;
+    transition:transform .12s ease, background .15s ease, border-color .15s ease;
+  }
+  .btn--primary{
+    background:var(--navy);
+    color:var(--cream);
+  }
+  .btn--primary:active{ transform:translateY(1px); }
+  .btn--primary:focus-visible{
+    outline:2px solid var(--gold);
+    outline-offset:3px;
+  }
+  .link{
+    align-self:flex-start;
+    background:none;
+    border:0;
+    padding:12px 0;
+    font-family:inherit;
+    font-size:14px;
+    font-weight:500;
+    color:var(--navy-50);
+    cursor:pointer;
+    touch-action:manipulation;
+  }
+  .link:focus-visible{
+    outline:2px solid var(--gold);
+    outline-offset:3px;
+    border-radius:3px;
+  }
+
+  /* ---------- start ---------- */
+  .screen--start{
+    justify-content:space-between;
+    gap:44px;
+  }
+  .start__body{ padding-top:36px; }
+  .start__foot{ padding-top:8px; }
+
+  /* ---------- question ---------- */
+  .q{
+    flex:1;
+    padding-top:30px;
+  }
+  .q__text{
+    font-family:'Playfair Display',Georgia,serif;
+    font-weight:700;
+    font-size:clamp(1.4rem,6.1vw,1.72rem);
+    line-height:1.28;
+    letter-spacing:-.01em;
+    color:var(--navy);
+    margin:0 0 22px;
+  }
+  .options{ display:block; }
+  .option{
+    display:flex;
+    align-items:center;
+    width:100%;
+    text-align:left;
+    font-family:inherit;
+    font-size:16px;
+    line-height:1.45;
+    color:var(--black);
+    background:#fff;
+    border:1px solid var(--navy-12);
+    border-radius:6px;
+    padding:15px 16px;
+    cursor:pointer;
+    touch-action:manipulation;
+    -webkit-tap-highlight-color:transparent;
+    transition:background .14s ease, border-color .14s ease, color .14s ease;
+  }
+  .option + .option{ margin-top:10px; }
+  .option:hover{ border-color:var(--navy-50); }
+  .option:focus-visible{
+    outline:2px solid var(--gold);
+    outline-offset:2px;
+  }
+  .option.is-selected{
+    background:var(--navy);
+    border-color:var(--navy);
+    color:var(--cream);
+  }
+  .q__foot{
+    display:flex;
+    align-items:center;
+    min-height:44px;
+    padding-top:10px;
+  }
+
+  /* ---------- lead form ---------- */
+  .lead{ padding-top:28px; }
+  .lead__head{ margin-bottom:24px; }
+  .field{ margin-bottom:16px; }
+  .field label{
+    display:block;
+    margin-bottom:7px;
+    font-size:13px;
+    font-weight:600;
+    letter-spacing:.01em;
+    color:var(--navy);
+  }
+  .field input{
+    display:block;
+    width:100%;
+    font-family:inherit;
+    font-size:16px;
+    line-height:1.4;
+    color:var(--black);
+    background:#fff;
+    border:1px solid var(--navy-12);
+    border-radius:6px;
+    padding:14px;
+    outline:none;
+    transition:border-color .14s ease, box-shadow .14s ease;
+    -webkit-appearance:none;
+    appearance:none;
+  }
+  .field input::placeholder{ color:rgba(26,26,26,.35); }
+  .field input:focus{
+    border-color:var(--navy);
+    box-shadow:0 0 0 3px rgba(201,168,76,.28);
+  }
+  .field.is-invalid input{ border-color:var(--error); }
+  .error{
+    margin:6px 0 0;
+    font-size:13px;
+    line-height:1.4;
+    color:var(--error);
+  }
+  .error[hidden]{ display:none; }
+
+  /* honeypot — visually gone, still in the DOM for bots */
+  .trap{
+    position:absolute;
+    left:-9999px;
+    top:auto;
+    width:1px;
+    height:1px;
+    overflow:hidden;
+  }
+
+  .form__foot{ margin-top:26px; }
+
+  /* ---------- result ---------- */
+  .result{ padding-top:6px; }
+  .score{
+    display:flex;
+    align-items:baseline;
+    gap:8px;
+  }
+  .score__num{
+    font-family:'Playfair Display',Georgia,serif;
+    font-weight:700;
+    font-size:clamp(3.4rem,17vw,4.5rem);
+    line-height:.95;
+    letter-spacing:-.035em;
+    color:var(--navy);
+  }
+  .score__den{
+    font-size:15px;
+    font-weight:500;
+    color:var(--navy-50);
+  }
+  .chip{
+    display:inline-block;
+    margin-top:16px;
+    padding:7px 14px;
+    font-size:11px;
+    font-weight:600;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--navy);
+    background:rgba(201,168,76,.12);
+    border:1px solid var(--gold);
+    border-radius:999px;
+  }
+  .result__headline{
+    font-family:'Playfair Display',Georgia,serif;
+    font-weight:700;
+    font-size:clamp(1.45rem,6.2vw,1.75rem);
+    line-height:1.25;
+    letter-spacing:-.01em;
+    color:var(--navy);
+    margin:0 0 10px;
+  }
+  .result__body{
+    margin:0;
+    font-size:16px;
+    line-height:1.62;
+    color:var(--navy-70);
+  }
+  .block + .block{ margin-top:26px; }
+  .result__foot{
+    margin-top:auto;
+    padding-top:36px;
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    *{ transition:none !important; animation:none !important; }
+  }
+</style>
+</head>
+<body>
+
+<main class="app" id="app"></main>
+
+<script>
+/* ==========================================================================
+   CONFIG — everything you might want to edit lives here.
+   Change copy, the WhatsApp number, or the points. No logic edits needed.
+   ========================================================================== */
+const CONFIG = {
+
+  brand: {
+    name: "Nexflow"
+  },
+
+  whatsapp: {
+    number: "2347087720935",          // international format, no + or spaces
+    linkBase: "https://wa.me/"
+  },
+
+  storageKey: "nexflow_sales_leak_v1",
+
+  /* ---------------- copy ---------------- */
+  copy: {
+    start: {
+      eyebrow: "The Sales Leak Scorecard",
+      headline: "Find the one place your sales are leaking.",
+      subline: "12 questions. 2 minutes. You get your score and your main problem.",
+      cta: "Start my score.",
+      note: "No jargon. No pressure. Just your score."
+    },
+    question: {
+      back: "Back"
+    },
+    lead: {
+      counter: "Last step",
+      headline: "Where should I send your score?",
+      subline: "Your result shows on the next screen. I use these details to follow up on your score.",
+      firstLabel: "First name",
+      firstPlaceholder: "Zainab",
+      emailLabel: "Email",
+      emailPlaceholder: "you@example.com",
+      phoneLabel: "WhatsApp number",
+      phonePlaceholder: "0803 123 4567",
+      submit: "See my score.",
+      errors: {
+        first: "Enter your first name.",
+        email: "Enter a valid email, like you@example.com.",
+        phone: "Enter a valid WhatsApp number, like 0803 123 4567."
+      }
+    },
+    result: {
+      counter: "Your scorecard",
+      scoreLabel: "Your score",
+      leakLabel: "Your main leak",
+      fixLabel: "Your fix for today",
+      note: "Opens WhatsApp with your score ready to send."
+    }
+  },
+
+  /* ---------------- questions ----------------
+     n        : question number (1–12)
+     scored   : false for Q1 and Q12
+     points   : only on scored questions (max 10 each)
+     route    : only on Q12 — "RESET" or "SESSION"
+  -------------------------------------------- */
+  questions: [
+    {
+      n: 1,
+      scored: false,
+      text: "What do you sell?",
+      options: [
+        { label: "Coaching or consulting." },
+        { label: "A service, like design, writing or beauty." },
+        { label: "Digital products or courses." },
+        { label: "Physical products." },
+        { label: "Something else." }
+      ]
+    },
+    {
+      n: 2,
+      scored: true,
+      text: "If a stranger reads your bio, can they tell what you sell and who it is for?",
+      options: [
+        { label: "Yes, in 10 seconds.", points: 10 },
+        { label: "Some people get it.", points: 5 },
+        { label: "People often ask me what I do.", points: 0 }
+      ]
+    },
+    {
+      n: 3,
+      scored: true,
+      text: "How many different things do you sell right now?",
+      options: [
+        { label: "One or two.", points: 10 },
+        { label: "Three or four.", points: 5 },
+        { label: "Five or more.", points: 0 }
+      ]
+    },
+    {
+      n: 4,
+      scored: true,
+      text: "Do your posts tell people what to do next?",
+      options: [
+        { label: "Almost every post does.", points: 10 },
+        { label: "Some posts do.", points: 5 },
+        { label: "Rarely. I just post.", points: 0 }
+      ]
+    },
+    {
+      n: 5,
+      scored: true,
+      text: "In the last 30 days, how many people messaged you about buying?",
+      options: [
+        { label: "10 or more.", points: 10 },
+        { label: "3 to 9.", points: 5 },
+        { label: "0 to 2.", points: 0 }
+      ]
+    },
+    {
+      n: 6,
+      scored: true,
+      text: "Do you know which post or platform brought those people?",
+      options: [
+        { label: "Yes, I track it.", points: 10 },
+        { label: "I have a guess.", points: 5 },
+        { label: "No idea.", points: 0 }
+      ]
+    },
+    {
+      n: 7,
+      scored: true,
+      text: "When someone asks your price, how fast do you reply?",
+      options: [
+        { label: "Within one hour.", points: 10 },
+        { label: "Same day.", points: 5 },
+        { label: "Next day or later.", points: 0 }
+      ]
+    },
+    {
+      n: 8,
+      scored: true,
+      text: "Before you give your price, do you ask about their problem?",
+      options: [
+        { label: "Always.", points: 10 },
+        { label: "Sometimes.", points: 5 },
+        { label: "I send the price straight away.", points: 0 }
+      ]
+    },
+    {
+      n: 9,
+      scored: true,
+      text: "Out of your last 10 inquiries, how many paid?",
+      options: [
+        { label: "4 or more.", points: 10 },
+        { label: "1 to 3.", points: 5 },
+        { label: "None.", points: 0 }
+      ]
+    },
+    {
+      n: 10,
+      scored: true,
+      text: "When someone goes quiet after seeing your price, what do you do?",
+      options: [
+        { label: "I follow up on a set schedule.", points: 10 },
+        { label: "I follow up sometimes.", points: 5 },
+        { label: "Nothing. I wait.", points: 0 }
+      ]
+    },
+    {
+      n: 11,
+      scored: true,
+      text: "Do you have a list of every inquiry and where each one stands?",
+      options: [
+        { label: "Yes, written down.", points: 10 },
+        { label: "It is in my head or my chats.", points: 5 },
+        { label: "No.", points: 0 }
+      ]
+    },
+    {
+      n: 12,
+      scored: false,
+      text: "Which is more true for you right now?",
+      options: [
+        { label: "A. I do too many things at once and I need one clear direction.", route: "RESET" },
+        { label: "B. I know what to do, but sales are not coming in.", route: "SESSION" }
+      ]
+    }
+  ],
+
+  /* ---------------- buckets ----------------
+     Order matters. On a tie, the earlier bucket wins.
+  ----------------------------------------- */
+  buckets: [
+    {
+      key: "offer",
+      name: "Offer Clarity",
+      questions: [2, 3, 4],
+      explanation: "People cannot repeat what you do or who it is for. So they cannot refer you, and they buy slowly. The problem is your offer, not your market.",
+      fix: "Today, write one sentence: I help [who] get [result] through [what I do]. Put it at the top of your bio. Say it the same way in every chat."
+    },
+    {
+      key: "inquiry",
+      name: "Attention to Inquiry",
+      questions: [5, 6],
+      explanation: "Inquiries come in, but you do not know where from. You cannot repeat what works. Every good month feels like luck, and every slow month feels like a mystery.",
+      fix: "Today, ask every new person one question: How did you find me? Write the answer beside their name. After ten chats, your best platform is obvious."
+    },
+    {
+      key: "conversations",
+      name: "Conversations",
+      questions: [7, 8, 9],
+      explanation: "People ask for your price and then vanish. The leak is in the conversation: how fast you reply, what you ask first, and how you qualify before you quote.",
+      fix: "Today, set one rule: reply within the hour, and ask what they are trying to fix before you send any price. Then send the price."
+    },
+    {
+      key: "followup",
+      name: "Follow-Up",
+      questions: [10, 11],
+      explanation: "Most sales die in the silence after your price. Without a written list and a fixed follow-up rhythm, warm people go cold and you never know why.",
+      fix: "Today, open a note on your phone. List every open inquiry and the last date you spoke. Set a three-day reminder on each one."
+    }
+  ],
+
+  /* ---------------- tiers ---------------- */
+  tiers: [
+    { min: 0,  max: 39,  label: "Heavy leak" },
+    { min: 40, max: 69,  label: "Partial leak" },
+    { min: 70, max: 100, label: "Small leak" }
+  ],
+
+  /* ---------------- routes ----------------
+     {score} and {bottleneck} are replaced automatically.
+  ----------------------------------------- */
+  routes: {
+    SESSION: {
+      cta: "Book my Revenue Clarity Session",
+      message: "Hi Zainab, I scored {score}/100 on the Sales Leak Scorecard. My main leak is {bottleneck}. I am here for the Revenue Clarity Session."
+    },
+    RESET: {
+      cta: "Book my Clarity Reset",
+      message: "Hi Zainab, I scored {score}/100 on the Sales Leak Scorecard. My main leak is {bottleneck}. I am here for the Clarity Reset."
+    }
+  }
+};
+
+/* ==========================================================================
+   LOGIC — no copy below. Edit with care.
+   ========================================================================== */
+
+const LEAD_INDEX   = CONFIG.questions.length + 1; // 13
+const RESULT_INDEX = CONFIG.questions.length + 2; // 14
+const LAST_INDEX   = RESULT_INDEX;
+
+const app = document.getElementById("app");
+
+const state = {
+  index: 0,
+  answers: {},                                   // { questionNumber: optionIndex }
+  lead: { first: "", email: "", phone: "" }
+};
+
+let advancing = false;
+
+/* ---------- helpers ---------- */
+const esc = (value) => String(value).replace(/[&<>"']/g, (c) => (
+  { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]
+));
+
+function pointsFor(questionNumber) {
+  const question = CONFIG.questions[questionNumber - 1];
+  if (!question) return 0;
+  const option = question.options[state.answers[questionNumber]];
+  return option && typeof option.points === "number" ? option.points : 0;
+}
+
+/* ---------- storage ---------- */
+function save() {
+  try {
+    localStorage.setItem(CONFIG.storageKey, JSON.stringify({
+      index: state.index,
+      answers: state.answers,
+      lead: state.lead
+    }));
+  } catch (err) { /* private mode, quota — ignore */ }
+}
+
+function restore() {
+  try {
+    const raw = localStorage.getItem(CONFIG.storageKey);
+    if (!raw) return;
+    const data = JSON.parse(raw);
+    if (!data || typeof data !== "object") return;
+    if (Number.isInteger(data.index) && data.index >= 0 && data.index <= LAST_INDEX) {
+      state.index = data.index;
+    }
+    if (data.answers && typeof data.answers === "object") {
+      state.answers = data.answers;
+    }
+    if (data.lead && typeof data.lead === "object") {
+      state.lead = Object.assign({ first: "", email: "", phone: "" }, data.lead);
+    }
+  } catch (err) { /* ignore */ }
+}
+
+/* ---------- scoring ---------- */
+function computeResult() {
+  const buckets = CONFIG.buckets.map((bucket) => {
+    const max = bucket.questions.length * 10;
+    const score = bucket.questions.reduce((sum, qn) => sum + pointsFor(qn), 0);
+    return Object.assign({}, bucket, { score, max, pct: (score / max) * 100 });
+  });
+
+  const total = buckets.reduce((sum, bucket) => sum + bucket.score, 0);
+
+  // Lowest percentage wins. Strict "<" keeps the earlier bucket on a tie.
+  const bottleneck = buckets.reduce(
+    (best, bucket) => (bucket.pct < best.pct ? bucket : best),
+    buckets[0]
+  );
+
+  const tier =
+    CONFIG.tiers.find((t) => total >= t.min && total <= t.max) ||
+    CONFIG.tiers[CONFIG.tiers.length - 1];
+
+  const q12 = CONFIG.questions[11];
+  const q12Option = q12.options[state.answers[12]];
+  const route = (q12Option && q12Option.route) || "SESSION";
+
+  return { buckets, total, bottleneck, tier, route };
+}
+
+function answerSummary() {
+  return CONFIG.questions.reduce((rows, question) => {
+    const option = question.options[state.answers[question.n]];
+    if (!option) return rows;
+    rows.push({
+      question: question.text,
+      answer: option.label,
+      points: typeof option.points === "number" ? option.points : null
+    });
+    return rows;
+  }, []);
+}
+
+/* ---------- validation ---------- */
+function isValidEmail(value) {
+  const v = String(value).trim();
+  if (!v || v.length > 254) return false;
+  return /^[^\s@]+@[^\s@]+\.[A-Za-z]{2,}$/.test(v);
+}
+
+function isValidPhone(value) {
+  const digits = String(value).replace(/\D/g, "");
+  if (digits.length < 10 || digits.length > 15) return false;
+  if (digits.indexOf("234") === 0) return digits.length === 13; // +234 708 772 0935
+  if (digits.charAt(0) === "0") return digits.length === 11;    // 0708 772 0935
+  return true;
+}
+
+/* ==========================================================================
+   PLACEHOLDER — connect your email or CRM here later.
+   Receives the full lead object. Return a promise if you want.
+   The result screen renders before this runs, so a failure never blocks it.
+   ========================================================================== */
+function submitLead(lead) {
+  // Example:
+  // return fetch("https://your-endpoint.example/lead", {
+  //   method: "POST",
+  //   headers: { "Content-Type": "application/json" },
+  //   body: JSON.stringify(lead)
+  // });
+  return Promise.resolve();
+}
+
+/* ==========================================================================
+   RENDER
+   ========================================================================== */
+function render() {
+  advancing = false;
+
+  if (state.index === 0) {
+    renderStart();
+  } else if (state.index >= 1 && state.index <= CONFIG.questions.length) {
+    renderQuestion(state.index);
+  } else if (state.index === LEAD_INDEX) {
+    renderLead();
+  } else {
+    renderResult();
+  }
+
+  save();
+  window.scrollTo(0, 0);
+}
+
+/* ---------- start ---------- */
+function renderStart() {
+  const c = CONFIG.copy.start;
+  app.innerHTML =
+    '<div class="screen screen--start">' +
+      '<div class="start__body">' +
+        '<p class="eyebrow">' + esc(c.eyebrow) + '</p>' +
+        '<h1 class="display">' + esc(c.headline) + '</h1>' +
+        '<p class="sub">' + esc(c.subline) + '</p>' +
+      '</div>' +
+      '<div class="start__foot">' +
+        '<button class="btn btn--primary" type="button" id="startBtn">' + esc(c.cta) + '</button>' +
+        '<p class="micro">' + esc(c.note) + '</p>' +
+      '</div>' +
+    '</div>';
+
+  document.getElementById("startBtn").addEventListener("click", () => {
+    state.index = 1;
+    render();
+  });
+}
+
+/* ---------- question ---------- */
+function renderQuestion(questionNumber) {
+  const question = CONFIG.questions[questionNumber - 1];
+  const total = CONFIG.questions.length;
+  const pct = Math.round((questionNumber / total) * 100);
+  const selected = state.answers[question.n];
+
+  const optionsHtml = question.options.map((option, i) =>
+    '<button class="option' + (selected === i ? " is-selected" : "") + '" ' +
+      'type="button" data-index="' + i + '">' +
+      esc(option.label) +
+    '</button>'
+  ).join("");
+
+  app.innerHTML =
+    '<div class="screen">' +
+      '<div class="topbar">' +
+        '<span class="wordmark">' + esc(CONFIG.brand.name) + '</span>' +
+        '<span class="counter">' + questionNumber + ' / ' + total + '</span>' +
+      '</div>' +
+      '<div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" ' +
+        'aria-valuenow="' + pct + '" aria-label="Question ' + questionNumber + ' of ' + total + '">' +
+        '<div class="progress__fill" style="width:' + pct + '%"></div>' +
+      '</div>' +
+      '<div class="q">' +
+        '<h2 class="q__text">' + esc(question.text) + '</h2>' +
+        '<div class="options" id="options" role="group" aria-label="' + esc(question.text) + '">' +
+          optionsHtml +
+        '</div>' +
+      '</div>' +
+      '<div class="q__foot">' +
+        (questionNumber > 1
+          ? '<button class="link" type="button" id="backBtn">' + esc(CONFIG.copy.question.back) + '</button>'
+          : '') +
+      '</div>' +
+    '</div>';
+
+  document.getElementById("options").addEventListener("click", (event) => {
+    const btn = event.target.closest(".option");
+    if (!btn || advancing) return;
+    advancing = true;
+
+    const chosen = Number(btn.dataset.index);
+    state.answers[question.n] = chosen;
+
+    const all = document.querySelectorAll(".option");
+    for (let i = 0; i < all.length; i++) {
+      all[i].classList.toggle("is-selected", all[i] === btn);
+    }
+
+    window.setTimeout(() => {
+      state.index = questionNumber + 1;
+      render();
+    }, 170);
+  });
+
+  const backBtn = document.getElementById("backBtn");
+  if (backBtn) {
+    backBtn.addEventListener("click", () => {
+      state.index = Math.max(0, questionNumber - 1);
+      render();
+    });
+  }
+}
+
+/* ---------- lead capture ---------- */
+function renderLead() {
+  const c = CONFIG.copy.lead;
+
+  app.innerHTML =
+    '<div class="screen">' +
+      '<div class="topbar">' +
+        '<span class="wordmark">' + esc(CONFIG.brand.name) + '</span>' +
+        '<span class="counter">' + esc(c.counter) + '</span>' +
+      '</div>' +
+      '<div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" ' +
+        'aria-valuenow="100" aria-label="Almost done">' +
+        '<div class="progress__fill" style="width:100%"></div>' +
+      '</div>' +
+
+      '<div class="lead">' +
+        '<div class="lead__head">' +
+          '<h2 class="display display--sm">' + esc(c.headline) + '</h2>' +
+          '<p class="sub">' + esc(c.subline) + '</p>' +
+        '</div>' +
+
+        '<form id="leadForm" novalidate>' +
+          '<div class="field" id="field-first">' +
+            '<label for="firstName">' + esc(c.firstLabel) + '</label>' +
+            '<input id="firstName" name="firstName" type="text" autocomplete="given-name" ' +
+              'autocapitalize="words" enterkeyhint="next" ' +
+              'placeholder="' + esc(c.firstPlaceholder) + '" ' +
+              'value="' + esc(state.lead.first) + '" ' +
+              'aria-describedby="err-first">' +
+            '<p class="error" id="err-first" hidden></p>' +
+          '</div>' +
+
+          '<div class="field" id="field-email">' +
+            '<label for="email">' + esc(c.emailLabel) + '</label>' +
+            '<input id="email" name="email" type="email" inputmode="email" ' +
+              'autocomplete="email" autocapitalize="none" spellcheck="false" enterkeyhint="next" ' +
+              'placeholder="' + esc(c.emailPlaceholder) + '" ' +
+              'value="' + esc(state.lead.email) + '" ' +
+              'aria-describedby="err-email">' +
+            '<p class="error" id="err-email" hidden></p>' +
+          '</div>' +
+
+          '<div class="field" id="field-phone">' +
+            '<label for="phone">' + esc(c.phoneLabel) + '</label>' +
+            '<input id="phone" name="phone" type="tel" inputmode="tel" ' +
+              'autocomplete="tel" enterkeyhint="done" ' +
+              'placeholder="' + esc(c.phonePlaceholder) + '" ' +
+              'value="' + esc(state.lead.phone) + '" ' +
+              'aria-describedby="err-phone">' +
+            '<p class="error" id="err-phone" hidden></p>' +
+          '</div>' +
+
+          '<div class="trap" aria-hidden="true">' +
+            '<label for="companyWebsite">Website</label>' +
+            '<input id="companyWebsite" name="companyWebsite" type="text" ' +
+              'tabindex="-1" autocomplete="off">' +
+          '</div>' +
+
+          '<div class="form__foot">' +
+            '<button class="btn btn--primary" type="submit">' + esc(c.submit) + '</button>' +
+          '</div>' +
+        '</form>' +
+      '</div>' +
+    '</div>';
+
+  // Keep typed values in state (and storage) without re-rendering.
+  ["firstName", "email", "phone"].forEach((id) => {
+    document.getElementById(id).addEventListener("input", (event) => {
+      const key = id === "firstName" ? "first" : id;
+      state.lead[key] = event.target.value;
+      save();
+    });
+  });
+
+  document.getElementById("leadForm").addEventListener("submit", handleLeadSubmit);
+}
+
+function showError(fieldId, message) {
+  const field = document.getElementById("field-" + fieldId);
+  const error = document.getElementById("err-" + fieldId);
+  field.classList.add("is-invalid");
+  error.textContent = message;
+  error.hidden = false;
+}
+
+function clearError(fieldId) {
+  const field = document.getElementById("field-" + fieldId);
+  const error = document.getElementById("err-" + fieldId);
+  field.classList.remove("is-invalid");
+  error.textContent = "";
+  error.hidden = true;
+}
+
+function handleLeadSubmit(event) {
+  event.preventDefault();
+
+  const first = document.getElementById("firstName").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const phone = document.getElementById("phone").value.trim();
+  const trap = document.getElementById("companyWebsite").value;
+
+  let firstInvalid = null;
+
+  if (!first) {
+    showError("first", CONFIG.copy.lead.errors.first);
+    firstInvalid = firstInvalid || "firstName";
+  } else {
+    clearError("first");
+  }
+
+  if (!isValidEmail(email)) {
+    showError("email", CONFIG.copy.lead.errors.email);
+    firstInvalid = firstInvalid || "email";
+  } else {
+    clearError("email");
+  }
+
+  if (!isValidPhone(phone)) {
+    showError("phone", CONFIG.copy.lead.errors.phone);
+    firstInvalid = firstInvalid || "phone";
+  } else {
+    clearError("phone");
+  }
+
+  if (firstInvalid) {
+    document.getElementById(firstInvalid).focus();
+    return;
+  }
+
+  state.lead = { first, email, phone };
+
+  const result = computeResult();
+
+  const payload = {
+    firstName: first,
+    email: email,
+    phone: phone,
+    score: result.total,
+    tier: result.tier.label,
+    bottleneck: result.bottleneck.name,
+    route: result.route,
+    answers: answerSummary(),
+    submittedAt: new Date().toISOString()
+  };
+
+  // Show the result first. Nothing blocks it.
+  state.index = RESULT_INDEX;
+  render();
+
+  // Spam trap filled → silently drop, no lead is sent.
+  if (trap) return;
+
+  try {
+    const pending = submitLead(payload);
+    if (pending && typeof pending.catch === "function") {
+      pending.catch((err) => console.warn("submitLead failed:", err));
+    }
+  } catch (err) {
+    console.warn("submitLead threw:", err);
+  }
+}
+
+/* ---------- result ---------- */
+function renderResult() {
+  const result = computeResult();
+  const route = CONFIG.routes[result.route] || CONFIG.routes.SESSION;
+
+  const message = route.message
+    .replace("{score}", String(result.total))
+    .replace("{bottleneck}", result.bottleneck.name);
+
+  const href = CONFIG.whatsapp.linkBase + CONFIG.whatsapp.number +
+    "?text=" + encodeURIComponent(message);
+
+  const c = CONFIG.copy.result;
+
+  app.innerHTML =
+    '<div class="screen">' +
+      '<div class="topbar">' +
+        '<span class="wordmark">' + esc(CONFIG.brand.name) + '</span>' +
+        '<span class="counter">' + esc(c.counter) + '</span>' +
+      '</div>' +
+      '<hr class="rule">' +
+
+      '<div class="result">' +
+        '<p class="label">' + esc(c.scoreLabel) + '</p>' +
+        '<div class="score">' +
+          '<span class="score__num">' + result.total + '</span>' +
+          '<span class="score__den">/ 100</span>' +
+        '</div>' +
+        '<span class="chip">' + esc(result.tier.label) + '</span>' +
+
+        '<hr class="rule">' +
+
+        '<div class="block">' +
+          '<p class="label">' + esc(c.leakLabel) + '</p>' +
+          '<h2 class="result__headline">' + esc(result.bottleneck.name) + '</h2>' +
+          '<p class="result__body">' + esc(result.bottleneck.explanation) + '</p>' +
+        '</div>' +
+
+        '<div class="block">' +
+          '<p class="label">' + esc(c.fixLabel) + '</p>' +
+          '<p class="result__body">' + esc(result.bottleneck.fix) + '</p>' +
+        '</div>' +
+      '</div>' +
+
+      '<div class="result__foot">' +
+        '<a class="btn btn--primary" href="' + esc(href) + '" target="_blank" rel="noopener">' +
+          esc(route.cta) +
+        '</a>' +
+        '<p class="micro">' + esc(c.note) + '</p>' +
+      '</div>' +
+    '</div>';
+}
+
+/* ---------- boot ---------- */
+restore();
+render();
+</script>
+</body>
+</html>
